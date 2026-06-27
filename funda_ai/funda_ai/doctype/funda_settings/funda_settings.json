@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-27 14:25:28.949279",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_ai_tutor",
+  "ollama_model_name",
+  "chromadb_collection_name",
+  "max_chat_history"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enable_ai_tutor",
+   "fieldtype": "Check",
+   "label": "Enable AI Tutor"
+  },
+  {
+   "default": "llama3",
+   "fieldname": "ollama_model_name",
+   "fieldtype": "Data",
+   "label": "Ollama Model Name"
+  },
+  {
+   "default": "heritage_projects",
+   "fieldname": "chromadb_collection_name",
+   "fieldtype": "Data",
+   "label": "Chroma Collection Name"
+  },
+  {
+   "description": "helps manage RAM usage",
+   "fieldname": "max_chat_history",
+   "fieldtype": "Int",
+   "label": "Max Chat History"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-06-27 14:28:27.163068",
+ "modified_by": "Administrator",
+ "module": "Funda Ai",
+ "name": "Funda Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

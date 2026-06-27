@@ -1,0 +1,96 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "HBC-DOC-.####",
+ "creation": "2026-06-27 14:13:09.060929",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "tier",
+  "material_file",
+  "column_break_kirg",
+  "indexing_status",
+  "chunk_count",
+  "section_break_hbxl",
+  "error_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "placeholder": "O-Level Combined Science Syllabus 2026"
+  },
+  {
+   "fieldname": "tier",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tier",
+   "options": "Primary\nJunior High\nSenior High"
+  },
+  {
+   "fieldname": "material_file",
+   "fieldtype": "Attach",
+   "label": "Material File"
+  },
+  {
+   "fieldname": "indexing_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Indexing Status",
+   "options": "Pending\nProcessing\nIndexed\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "chunk_count",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Chunk Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Text",
+   "label": "Error Log",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_kirg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_hbxl",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-27 14:18:44.491487",
+ "modified_by": "Administrator",
+ "module": "Funda Ai",
+ "name": "Curriculum Material",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

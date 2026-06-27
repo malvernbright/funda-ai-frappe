@@ -1,8 +1,8 @@
-### Funda Ai
+# Funda Ai
 
 Funda AI is a Zimbabwean based Heritage-Based Curriculum AI assistant with a Zimbabwean mind
 
-### Installation
+## Installation
 
 You can install this app using the [bench](https://github.com/frappe/bench) CLI:
 

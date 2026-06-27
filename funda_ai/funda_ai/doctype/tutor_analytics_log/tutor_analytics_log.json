@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "autoname": "autoincrement",
+ "creation": "2026-06-27 14:19:03.884243",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "timestamp",
+  "student",
+  "project_reference",
+  "column_break_uxtf",
+  "detected_stage",
+  "section_break_ngqo",
+  "user_query",
+  "ai_response"
+ ],
+ "fields": [
+  {
+   "fieldname": "timestamp",
+   "fieldtype": "Datetime",
+   "label": "Timestamp"
+  },
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "label": "Student",
+   "options": "Student"
+  },
+  {
+   "fieldname": "project_reference",
+   "fieldtype": "Link",
+   "label": "Project Reference",
+   "options": "HBC Project"
+  },
+  {
+   "fieldname": "column_break_uxtf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "detected_stage",
+   "fieldtype": "Select",
+   "label": "Detected Stage",
+   "options": "Stage 1\nStage 2\nStage 3\nStage 4\nStage 5\nStage 6"
+  },
+  {
+   "fieldname": "section_break_ngqo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "user_query",
+   "fieldtype": "Text",
+   "label": "User Query"
+  },
+  {
+   "fieldname": "ai_response",
+   "fieldtype": "Text",
+   "label": "AI Response"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-27 14:23:53.215355",
+ "modified_by": "Administrator",
+ "module": "Funda Ai",
+ "name": "Tutor Analytics Log",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

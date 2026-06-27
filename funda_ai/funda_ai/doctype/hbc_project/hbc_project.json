@@ -1,0 +1,94 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "HBC-PROJ-.YYYY.-.#####",
+ "creation": "2026-06-27 14:03:09.544149",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "student",
+  "project_title",
+  "tier",
+  "column_break_cnvt",
+  "current_stage",
+  "project_status",
+  "section_break_dmjr",
+  "chat_history"
+ ],
+ "fields": [
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student",
+   "options": "Student"
+  },
+  {
+   "fieldname": "project_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Project Title",
+   "placeholder": "Solar Power in Murambinda"
+  },
+  {
+   "fieldname": "tier",
+   "fieldtype": "Select",
+   "label": "Tier",
+   "options": "Primary\nJunior High\nSenior High"
+  },
+  {
+   "fieldname": "current_stage",
+   "fieldtype": "Select",
+   "label": "Current Stage",
+   "options": "Stage 1: Problem Identification Stage 2: Investigation\nStage 3: Planning\nStage 4: Execution\nStage 5: Presentation\nStage 6: Evaluation"
+  },
+  {
+   "fieldname": "project_status",
+   "fieldtype": "Select",
+   "label": "Project Status",
+   "options": "Not Started\nIn Progress\nCompleted\nGraded"
+  },
+  {
+   "fieldname": "chat_history",
+   "fieldtype": "Text",
+   "hidden": 1,
+   "label": "Chat History"
+  },
+  {
+   "fieldname": "column_break_cnvt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_dmjr",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-27 14:12:42.032659",
+ "modified_by": "Administrator",
+ "module": "Funda Ai",
+ "name": "HBC Project",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
