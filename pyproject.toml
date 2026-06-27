@@ -1,7 +1,7 @@
 [project]
 name = "funda_ai"
 authors = [
-    { name = "ByteSphere Dev", email = "malvern@bytesphere.co.zw"}
+    { name = "ByteSphere Dev", email = "malvernbright.95@gmail.com"}
 ]
 description = "Funda AI is a Zimbabwean based Heritage-Based Curriculum AI assistant with a Zimbabwean mind"
 requires-python = ">=3.10"

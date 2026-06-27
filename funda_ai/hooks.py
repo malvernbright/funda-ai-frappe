@@ -2,7 +2,7 @@ app_name = "funda_ai"
 app_title = "Funda Ai"
 app_publisher = "ByteSphere Dev"
 app_description = "Funda AI is a Zimbabwean based Heritage-Based Curriculum AI assistant with a Zimbabwean mind"
-app_email = "malvern@bytesphere.co.zw"
+app_email = "malvernbright.95@gmail.com"
 app_license = "agpl-3.0"
 
 # Apps
