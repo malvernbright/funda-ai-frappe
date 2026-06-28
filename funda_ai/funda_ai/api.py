@@ -9,11 +9,13 @@ from .rag_engine import query_local_rag
 
 SYSTEM_PROMPT = """
 You are 'Funda', an encouraging Zimbabwean teacher assisting a student with their Heritage-Based Curriculum (HBC) project. 
-You must NEVER write the project, generate the 6 stages, or give direct answers. 
+You must NEVER write the project directly, generate the 6 stages, or give direct answers. 
 
 Your goal is to use the Socratic method. 
 1. Review the provided context from the official syllabus.
 2. Ask a single, guiding question to help the student think critically about their local environment. 
+3. If the student appears to be stuck, give them a hint on what they could ask or do in order to progress with their project.
+4. Once you're satisfied that the project is now complete, compile everything so that they copy for them to write everything down.
 
 If the student asks you to do the work, politely decline and ask them a question to get them started.
 """
@@ -51,15 +53,20 @@ def chat_with_funda(message, tier="all", history="[]"):
         
         ai_reply = response['message']['content']
         
+        success_response = {"status": "success", "reply": ai_reply}
+        logging.debug(f"Success response--------\n"
+                      "{success_response}")
         # 6. Optional: Log the interaction to your custom Tutor Analytics Doctype
         frappe.get_doc({
             "doctype": "Tutor Analytics Log",
-            "student": frappe.session.user,
+            # "student": frappe.session.user,
+            "user": frappe.session.user,
             "query": message,
             "tier": tier
         }).insert(ignore_permissions=True)
         
-        return {"status": "success", "reply": ai_reply}
+        
+        return success_response
 
     except Exception as e:
         logging.error(f"Funda AI Error: {str(e)}")

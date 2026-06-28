@@ -10,6 +10,7 @@
   "project_reference",
   "column_break_uxtf",
   "detected_stage",
+  "user",
   "section_break_ngqo",
   "user_query",
   "ai_response"
@@ -55,12 +56,19 @@
    "fieldname": "ai_response",
    "fieldtype": "Text",
    "label": "AI Response"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-27 14:23:53.215355",
+ "modified": "2026-06-28 16:00:15.044848",
  "modified_by": "Administrator",
  "module": "Funda Ai",
  "name": "Tutor Analytics Log",
