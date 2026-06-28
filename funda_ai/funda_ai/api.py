@@ -62,6 +62,6 @@ def chat_with_funda(message, tier="all", history="[]"):
         return {"status": "success", "reply": ai_reply}
 
     except Exception as e:
-        logging.error(str(e))
+        logging.error(f"Funda AI Error: {str(e)}")
         frappe.log_error(f"Funda AI Error: {str(e)}", "Funda AI Chat Endpoint")
         return {"status": "error", "message": "Funda is currently taking a break. Please try again."}
