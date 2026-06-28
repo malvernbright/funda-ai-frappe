@@ -1,8 +1,11 @@
+import logging
+
 import frappe
 import json
 import ollama
 # from funda_ai.funda_ai.rag.rag_engine import query_local_rag
-from funda_ai.rag import rag_engine
+from .rag_engine import query_local_rag
+
 
 SYSTEM_PROMPT = """
 You are 'Funda', an encouraging Zimbabwean teacher assisting a student with their Heritage-Based Curriculum (HBC) project. 
@@ -25,7 +28,7 @@ def chat_with_funda(message, tier="all", history="[]"):
         chat_history = json.loads(history)
         
         # 2. Query your local ChromaDB
-        rag_context = rag_engine.query_local_rag(message, tier)
+        rag_context = query_local_rag(message, tier)
         
         # 3. Build Socratic prompt with context
         augmented_prompt = f"""
@@ -42,7 +45,7 @@ def chat_with_funda(message, tier="all", history="[]"):
         
         # 5. Call local Ollama model (e.g., Llama 3 8B quantized)
         response = ollama.chat(
-            model="llama3", # Or whichever lightweight model you are targeting
+            model="qwen2.5-coder:7b", # Or whichever lightweight model you are targeting
             messages=messages
         )
         
@@ -59,5 +62,6 @@ def chat_with_funda(message, tier="all", history="[]"):
         return {"status": "success", "reply": ai_reply}
 
     except Exception as e:
+        logging.error(str(e))
         frappe.log_error(f"Funda AI Error: {str(e)}", "Funda AI Chat Endpoint")
         return {"status": "error", "message": "Funda is currently taking a break. Please try again."}
