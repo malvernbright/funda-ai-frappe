@@ -1,5 +1,6 @@
 .DS_Store
 *.pyc
+*.py[cod]
 *.egg-info
 *.swp
 tags
