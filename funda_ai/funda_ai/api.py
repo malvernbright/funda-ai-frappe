@@ -67,13 +67,13 @@ def chat_with_funda(message, tier="All Levels", history="[]", session_name=None)
         
         # If ChromaDB returns nothing, trigger the online fallback
         if not rag_context.strip():
-            logging.debug("No local knowledge found. Triggering online fallback.")
-            frappe.logger().info("No local knowledge found. Triggering online fallback.")
-            rag_context = fetch_online_context(rag_search_query)
-            
-            # Append a note so the AI knows this is from the internet, not the syllabus
-            if rag_context:
-                rag_context = f"[INTERNET SEARCH RESULTS]\n{rag_context}"
+            try:
+                online_context = fetch_online_context(rag_search_query)
+                if online_context:
+                    rag_context = f"[INTERNET SEARCH RESULTS]\n{online_context}"
+            except Exception as e:
+                # Silently fail! Do NOT let this error reach the main try/except block.
+                logging.warning(f"Online search failed, skipping: {e}")
         
         # 3. Build Socratic prompt with context
         augmented_prompt = f"""
