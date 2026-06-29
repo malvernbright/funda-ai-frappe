@@ -6,6 +6,16 @@ from chromadb.config import Settings
 import docx
 import PyPDF2
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
+
+
 # Get the directory where rag_engine.py is currently located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
