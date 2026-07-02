@@ -1,12 +1,11 @@
 frappe.pages['funda_chat'].on_page_load = function (wrapper) {
     // Safely load external libraries avoiding the appendChild crash
     frappe.require([
-        "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
-        "https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css",
-        "https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+        "/assets/funda_ai/js/marked.min.js",
+        "/assets/funda_ai/css/katex.min.css",
+        "/assets/funda_ai/js/katex.min.js"
     ], function() {
-        // Load KaTeX auto-render sequentially after the core is loaded
-        frappe.require("https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js", function() {
+        frappe.require("/assets/funda_ai/js/auto-render.min.js", function() {
             initFundaChat(wrapper);
         });
     });
