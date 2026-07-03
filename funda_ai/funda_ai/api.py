@@ -1,7 +1,7 @@
 import logging
 import frappe
 import json
-import string
+import socket
 import ollama
 from .rag_engine import query_local_rag
 from .online_fallback import fetch_online_context
@@ -10,112 +10,111 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
-
 logger = logging.getLogger(__name__)
 
-
 SYSTEM_PROMPT = """
-You are 'Funda', an encouraging Zimbabwean teacher assisting a student with their Heritage-Based Curriculum (HBC) project. 
-You are fluent in English, Shona, and Ndebele.
+You are 'Funda', an encouraging, highly knowledgeable Zimbabwean master teacher and tutor. 
+You are fully fluent in English, Shona, and Ndebele, and you always match the language and mix-tone used by the student.
 
-CORE RULES:
-1. GROUNDING: Your answer must be derived ONLY from the provided [Context]. If the [Context] does not contain the answer in the language requested, state that you need more information from the syllabus. DO NOT guess.
-2. LANGUAGE: Reply in the same language as the student's prompt. 
-3. SOCRATIC METHOD: Ask guiding questions. Do not give the answer.
-4. HALLUCINATION PREVENTION: If a student asks for scientific facts in Shona/Ndebele, strictly use the technical terms found in the provided [Context] to ensure accuracy.
+CORE TUTORING PHILOSOPHY:
+1. GROUNDING: Base your educational knowledge directly on the provided [Context] from local syllabi and textbooks. If the context does not contain relevant pedagogical framework, rely cleanly on standardized ZIMSEC and Cambridge curriculum principles. Never hallucinate facts.
+2. SOCRATIC METHOD: Do not provide direct answers or write segments for the student. Guide them using structured inquiries, hints, and step-by-step conceptual scaffolding.
+3. LANGUAGE INTEGRITY: If the student asks for technical concepts or scientific tasks in Shona or Ndebele, ensure accuracy by combining accurate native phrasing with proper technical definitions found in the context.
 
-CRITICAL LANGUAGE RULE: 
-You fully understand English, Shona, and Ndebele. You MUST reply in the exact language the student uses. If they ask a question in Shona, reply in Shona. If they mix languages, match their tone.
-
-PRIMARY DIRECTIVE:
-Your default behavior is the Socratic method. Do not write the project for the student. Ask guiding questions to help them think critically about their local environment. 
-
-HANDLING SPECIFIC REQUESTS:
-- Scenario A (Tutoring): If the student is working on a specific stage, review the provided syllabus context and ask a single, guiding question. If they are stuck, give a small hint on what they should research.
-- Scenario B (Progress & Templates): IF the student asks about the project's progress or what the final project should look like, YOU ARE EXPLICITLY ALLOWED to summarize the 6 stages based on the provided template context. Give them a high-level roadmap of the template, but remind them they must write their own specific details.
-- Scenario C (Cheating): If the student asks you to do the work without putting in effort, politely decline and ask a question to get them started.
-- Scenario D (Completion): Once the 6 stages are complete, compile their work so they can copy it.
+DYNAMIC ARCHITECTURAL MODES:
+- MODE A: Project Mode (Heritage-Based Curriculum)
+  Guide the student sequentially through the 6 core stages of their HBC project layout (Problem Identification, Investigation, Idea Generation, Refinement, Presentation, Evaluation). You are allowed to summarize project progress frameworks or display high-level stage requirements based on template documents when explicitly asked about layout roadmaps.
+- MODE B: Tutoring Mode (General Academic Enrichment)
+  Act as a smart, versatile multi-subject mentor covering Mathematics, English Language, Geography, and general sciences. Break complex concepts into clear, digestible learning milestones. Present formulas, explanations, and linguistic frameworks beautifully. Verify comprehension at the end of each sub-step before advancing to the next.
 """
 
+def is_internet_available(host="8.8.8.8", port=53, timeout=2):
+    """Check if the local server environment has real-world internet connectivity."""
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except Exception:
+        return False
+
 @frappe.whitelist()
-def chat_with_funda(message, tier="All Levels", history="[]", session_name=None):
+def chat_with_funda(message, tier="All Levels", mode="Project", subject="General", history="[]", session_name=None):
     """
-    Frappe API endpoint replacing the FastAPI chat route.
+    Unified Frappe API endpoint for the Funda Smart Tutor ecosystem.
     """
     try:
-        # Map incoming frontend values to the exact DocType Select options
+        # 1. Normalize frontend strings to match validation options inside DocTypes
         tier_map = {
-            "all": "All Levels",
-            "primary": "Primary",
-            "junior_high": "Junior High",
-            "senior_high": "Senior High"
+            "all": "All Levels", "All Levels": "All Levels",
+            "primary": "Primary", "Primary": "Primary",
+            "junior_high": "Junior High", "Junior High": "Junior High",
+            "senior_high": "Senior High", "Senior High": "Senior High"
         }
         actual_tier = tier_map.get(tier, "All Levels")
-        # 1. Parse history
         chat_history = json.loads(history)
         
-        # 2. DYNAMIC TOPIC EXTRACTION FOR RAG
-        # Extract previous user messages to maintain the topic in the vector search
+        # 2. Sliding Window Query Enrichment
         user_messages = [msg['content'] for msg in chat_history if msg['role'] == 'user']
-        
-        # Take up to the last 2 user messages + the current message to form a robust search query
         recent_context = " ".join(user_messages[-2:]) if user_messages else ""
         rag_search_query = f"{recent_context} {message}".strip()
         
-        # Query local ChromaDB with the enriched query so it remembers the topic
-        rag_context = query_local_rag(rag_search_query, tier)
+        # 3. Subject-Separated Local RAG Execution
+        # We lowercase inputs to align nicely with segmented subdirectory naming
+        rag_context = query_local_rag(
+            user_query=rag_search_query, 
+            tier=actual_tier.lower().replace(" ", "_"), 
+            subject=subject.lower()
+        )
         
-        # If ChromaDB returns nothing, trigger the online fallback
-        if not rag_context.strip():
-            try:
-                online_context = fetch_online_context(rag_search_query)
-                if online_context:
-                    rag_context = f"[INTERNET SEARCH RESULTS]\n{online_context}"
-            except Exception as e:
-                # Silently fail! Do NOT let this error reach the main try/except block.
-                logging.warning(f"Online search failed, skipping: {e}")
+        # 4. Strict Offline-First Logic Gate
+        # Online fallback runs ONLY in Project Mode when local assets are fully exhausted and web is verified
+        if not rag_context.strip() and mode == "Project":
+            if is_internet_available():
+                try:
+                    online_context = fetch_online_context(rag_search_query)
+                    if online_context:
+                        rag_context = f"[INTERNET SEARCH RESULTS]\n{online_context}"
+                except Exception as net_err:
+                    logger.warning(f"Resilient fallback triggered. Online crawl skipped: {net_err}")
+            else:
+                logger.info("Server operating in pure offline environment. Web fallback bypassed.")
         
-        # 3. Build Socratic prompt with context
+        # 5. Injection Structure Building
         augmented_prompt = f"""
-        Context from HBC Syllabus & Templates:
-        {rag_context if rag_context else "No specific syllabus context found for this query."}
+        [SYSTEM ARCHITECTURE PARAMETERS]
+        Current Operational Mode: {mode} Mode
+        Target Learning Subject: {subject}
+        Syllabus Context Grounding:
+        {rag_context if rag_context.strip() else "No direct localized materials retrieved. Teach via default curriculum guidelines."}
         
-        Student's Question: {message}
+        [STUDENT INQUIRY]
+        Question: {message}
         """
         
-        # 4. Construct messages array for Ollama
+        # 6. Inference Assembly
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         messages.extend(chat_history)
         messages.append({"role": "user", "content": augmented_prompt})
         
-        # 5. Call local Ollama model
         response = ollama.chat(
             model="qwen2.5-coder:7b", 
             messages=messages
         )
-        
         ai_reply = response['message']['content']
-        
-        # success_response = {"status": "success", "reply": ai_reply}
         success_response = {"status": "success", "reply": ai_reply, "session_name": session_name}
         
-        # --- DATABASE LOGGING ---
-        # 1. Create a new session if one wasn't provided
+        # 7. Persistent Conversational Logging
         if not session_name:
-            # Generate a short title from the user's message
             title = (message[:25] + '...') if len(message) > 25 else message
-            
             new_session = frappe.get_doc({
                 "doctype": "Funda Chat Session",
                 "topic": title,
-                "tier": actual_tier, # Use the mapped value here
-                "owner": frappe.session.user
+                "tier": actual_tier
             })
             new_session.insert(ignore_permissions=True)
             session_name = new_session.name
             success_response["session_name"] = session_name
             
-        # 2. Save the User's Message
         frappe.get_doc({
             "doctype": "Funda Chat Message",
             "session": session_name,
@@ -123,7 +122,6 @@ def chat_with_funda(message, tier="All Levels", history="[]", session_name=None)
             "content": message
         }).insert(ignore_permissions=True)
         
-        # 3. Save the AI's Reply
         frappe.get_doc({
             "doctype": "Funda Chat Message",
             "session": session_name,
@@ -131,32 +129,30 @@ def chat_with_funda(message, tier="All Levels", history="[]", session_name=None)
             "content": ai_reply
         }).insert(ignore_permissions=True)
         
-        # Update the session's modified date so it jumps to the top of the sidebar
         frappe.db.set_value("Funda Chat Session", session_name, "modified", frappe.utils.now())
         frappe.db.commit()
         
-        # 6. Log the interaction to the Tutor Analytics Doctype
+        # Keep background analytics stable
         frappe.get_doc({
             "doctype": "Tutor Analytics Log",
             "user": frappe.session.user,
             "query": message,
-            "tier": tier
+            "tier": actual_tier
         }).insert(ignore_permissions=True)
         
         return success_response
 
     except Exception as e:
-        logging.error(f"Funda AI Error: {str(e)}")
-        frappe.log_error(f"Funda AI Error: {str(e)}", "Funda AI Chat Endpoint")
+        logger.error(f"Funda Endpoint Crash: {str(e)}")
+        frappe.log_error(f"Funda AI Crash Log: {str(e)}", "Funda AI Chat Endpoint")
         return {"status": "error", "message": "Funda is currently taking a break. Please try again."}
-    
 
 @frappe.whitelist()
 def get_user_sessions():
-    """Fetches the sidebar history for the logged-in student."""
+    """Fetches list of historical chat sessions unique to the current account context."""
     sessions = frappe.get_all(
         "Funda Chat Session",
-        filters={"owner": frappe.session.user}, # Only show their own chats
+        filters={"owner": frappe.session.user},
         fields=["name", "topic", "modified"],
         order_by="modified desc",
         limit=15
@@ -165,7 +161,7 @@ def get_user_sessions():
 
 @frappe.whitelist()
 def get_session_messages(session_name):
-    """Fetches the full conversation when a sidebar item is clicked."""
+    """Retrieves full timeline ordering of a selected interaction block."""
     messages = frappe.get_all(
         "Funda Chat Message",
         filters={"session": session_name},

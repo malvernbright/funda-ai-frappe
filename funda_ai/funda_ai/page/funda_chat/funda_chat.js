@@ -1,5 +1,5 @@
 frappe.pages['funda_chat'].on_page_load = function (wrapper) {
-    // Safely load external libraries avoiding the appendChild crash
+    // 9. Load internal asset references to guarantee isolated offline execution
     frappe.require([
         "/assets/funda_ai/js/marked.min.js",
         "/assets/funda_ai/css/katex.min.css",
@@ -20,13 +20,17 @@ function initFundaChat(wrapper) {
 
     $(frappe.render_template("funda_chat", {})).appendTo(page.main);
 
-    // State Variables
+    // State Elements
     let chatHistory = [];
     let currentSessionName = null; 
+    
+    // DOM Targets 
     const $messages = $('#funda-messages');
     const $input = $('#funda-input');
     const $submit = $('#funda-submit');
     const $tier = $('#funda-tier');
+    const $mode = $('#funda-mode');
+    const $subject = $('#funda-subject');
     const $historyList = $('#funda-history-list');
     const $newChatBtn = $('#funda-new-chat');
 
@@ -37,17 +41,17 @@ function initFundaChat(wrapper) {
                 $historyList.empty();
                 if (r.message && r.message.status === "success" && r.message.sessions.length > 0) {
                     r.message.sessions.forEach(session => {
-                        const activeClass = session.name === currentSessionName ? 'background-color: #333537;' : '';
+                        const activeStyle = session.name === currentSessionName ? 'background-color: #333537; font-weight: bold;' : '';
                         const itemHtml = `
                             <div class="funda-history-item" data-session="${session.name}" 
-                                 style="padding: 10px; border-radius: 6px; cursor: pointer; font-size: 13px; color: #e3e3e3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.2s; ${activeClass}">
-                                💬 ${session.topic}
+                                 style="padding: 10px; border-radius: 6px; cursor: pointer; font-size: 13px; color: #e3e3e3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.2s; ${activeStyle}">
+                                📚 ${session.topic}
                             </div>
                         `;
                         $historyList.append(itemHtml);
                     });
                 } else {
-                    $historyList.append('<div style="font-size: 12px; color: #6b7280; text-align: center; margin-top: 20px;">No chat history found</div>');
+                    $historyList.append('<div style="font-size: 12px; color: #6b7280; text-align: center; margin-top: 15px;">No chat history found</div>');
                 }
             }
         });
@@ -58,7 +62,7 @@ function initFundaChat(wrapper) {
         chatHistory = [];
         currentSessionName = sessionName;
         
-        $messages.append('<div class="funda-msg-row assistant"><div class="funda-msg-box assistant">Loading...</div></div>');
+        $messages.append('<div class="funda-msg-row assistant"><div class="funda-msg-box assistant">Retrieving discussion timeline...</div></div>');
 
         frappe.call({
             method: "funda_ai.funda_ai.api.get_session_messages",
@@ -88,6 +92,7 @@ function initFundaChat(wrapper) {
         `;
         $messages.append(msgHtml);
         
+        // 10. Process Markdown contents and convert standard variables or LaTeX formatting cleanly
         renderMathInElement($messages[0], {
             delimiters: [
                 { left: '$$', right: '$$', display: true },
@@ -102,8 +107,7 @@ function initFundaChat(wrapper) {
         if (!message) return;
 
         appendMessage('user', message);
-        $input.val('');
-        $input.css('height', 'auto');
+        $input.val('').css('height', 'auto');
         $submit.prop('disabled', true);
         
         const loadingId = 'loading-' + Date.now();
@@ -115,6 +119,8 @@ function initFundaChat(wrapper) {
             args: {
                 message: message,
                 tier: $tier.val(),
+                mode: $mode.val(),
+                subject: $subject.val(),
                 history: JSON.stringify(chatHistory),
                 session_name: currentSessionName
             },
@@ -137,19 +143,18 @@ function initFundaChat(wrapper) {
                         chatHistory = chatHistory.slice(chatHistory.length - 10);
                     }
                 } else {
-                    appendMessage('assistant', "I'm having trouble connecting to the knowledge base. Let's try again in a moment.");
+                    appendMessage('assistant', "I'm having trouble connecting to the local tutor node. Let's try again in a moment.");
                 }
             }
         });
     }
 
-    // Initialize Sidebar
+    // Load initial layout elements
     loadSidebarHistory();
 
-    // Listeners
+    // Event Wire-up
     $historyList.on('click', '.funda-history-item', function() {
-        const sessionName = $(this).data('session');
-        loadSessionMessages(sessionName);
+        loadSessionMessages($(this).data('session'));
     });
 
     $newChatBtn.on('click', function() {
@@ -157,7 +162,7 @@ function initFundaChat(wrapper) {
         chatHistory = [];
         $messages.empty();
         loadSidebarHistory();
-        appendMessage('assistant', "Hi! I am Funda, your Heritage-Based Curriculum guide. What stage of your project are you working on today?");
+        appendMessage('assistant', "New session initialized. Select your parameters and let's work step-by-step.");
     });
 
     $submit.on('click', sendMessage);

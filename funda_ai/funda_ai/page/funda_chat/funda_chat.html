@@ -2,9 +2,15 @@
     <div class="funda-sidebar">
         <div>
             <h1 class="funda-logo">Funda AI Guide</h1>
-            <button id="funda-new-chat" class="funda-submit-btn"
-                style="width: 100%; margin-bottom: 20px; height: 38px;">+ New Chat</button>
-            <label style="font-size: 12px; color: #9ca3af; text-transform: uppercase;">Curriculum Level</label>
+            <button id="funda-new-chat" class="funda-submit-btn" style="width: 100%; margin-bottom: 20px; height: 38px;">+ New Chat</button>
+            
+            <label style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 4px;">Tutor System Mode</label>
+            <select id="funda-mode" class="funda-tier-select">
+                <option value="Project">Project Mode</option>
+                <option value="Tutoring">Tutoring Mode</option>
+            </select>
+
+            <label style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 4px;">Curriculum Level</label>
             <select id="funda-tier" class="funda-tier-select">
                 <option value="All Levels">All Levels</option>
                 <option value="Primary">Primary</option>
@@ -12,10 +18,20 @@
                 <option value="Senior High">Senior High</option>
             </select>
 
-            <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; margin: 15px 0 10px 0;">Chat History
-            </div>
-            <div id="funda-history-list"
-                style="display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 40vh;">
+            <label style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 4px;">Active Subject</label>
+            <select id="funda-subject" class="funda-tier-select">
+                <option value="General">General / Project Topic</option>
+                <option value="Math">Mathematics</option>
+                <option value="English">English Language</option>
+                <option value="Combined_Science">Combined Science</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Heritage_Studies">Heritage Studies</option>
+                <option value="Geography">Geography</option>
+            </select>
+
+            <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 600; margin: 15px 0 10px 0; border-top: 1px solid #333537; padding-top: 15px;">Chat History</div>
+            <div id="funda-history-list" style="display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: 35vh;">
             </div>
         </div>
         <div style="font-size: 12px; color: #9ca3af;">Local-First RAG Intelligence</div>
@@ -24,14 +40,12 @@
     <div class="funda-chat-area">
         <div id="funda-messages" class="funda-messages">
             <div class="funda-msg-row assistant">
-                <div class="funda-msg-box assistant">Hi! I am Funda, your Heritage-Based Curriculum guide. What stage of
-                    your project are you working on today?</div>
+                <div class="funda-msg-box assistant">Mhoro! I am Funda, your Smart Tutor and Heritage-Based Curriculum guide. Select your mode and subject on the left panel to begin. What are we studying today?</div>
             </div>
         </div>
 
         <div class="funda-prompt-form">
-            <textarea id="funda-input" class="funda-prompt-input" rows="1"
-                placeholder="Ask about your project methodology, data tools, or topic ideas..."></textarea>
+            <textarea id="funda-input" class="funda-prompt-input" rows="1" placeholder="Ask about rules, formulate variables, or outline topics..."></textarea>
             <button id="funda-submit" class="funda-submit-btn">Send</button>
         </div>
     </div>
